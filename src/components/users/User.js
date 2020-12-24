@@ -1,16 +1,19 @@
-import React, { Component, Fragment } from 'react'
+import React, { Fragment, useEffect, useContext } from 'react'
 import {Link} from 'react-router-dom'
 import Repos from '../repos/Repos'
+import GithubContext from '../../context/github/githubContext'
 
-class User extends Component {
-  componentDidMount() {
-    this.props.getUser(this.props.match.params.login)
-    this.props.getUserRepos(this.props.match.params.login)
+const User = ({ match}) => {
 
-  }
-  render() {
-    const {name, avatar_url, location, bio, blog, login, 
-      html_url, followers, following, public_repos, public_gists, hireable } = this.props.user
+  const githubContext = useContext(GithubContext)
+  const {name, avatar_url, location, bio, blog, login, html_url, followers, following, public_repos, public_gists, hireable } = githubContext.user
+
+  useEffect (() => {
+    githubContext.getUser(match.params.login)
+    githubContext.getUserRepos(match.params.login)
+  }, [])
+
+
     return (
       <Fragment>
         <Link to='/' className="btn btn-dark">Back to search</Link>
@@ -63,11 +66,11 @@ class User extends Component {
             </ul>
           </div>
         </div>
-        <Repos repos={this.props.repos}></Repos>
+        <Repos repos={githubContext.repos}></Repos>
       </Fragment>
       
     )
   }
-}
+
 
 export default User
